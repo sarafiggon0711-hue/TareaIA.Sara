@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadir Producto - Tienda Online</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            background: white;
+            padding: 4rem;
+            border-radius: 40px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .form-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 3rem;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+        }
+
+        .form-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            border: 1.5px solid var(--border-color);
+            background: #f8fafc;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+
+        .success-message {
+            display: none;
+            background: #dcfce7;
+            color: #15803d;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Tienda<span>Online</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Catálogo</a></li>
+                <li><a href="add-product.html" class="btn-nav">Añadir Nuevo</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <a href="index.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Volver al catálogo
+            </a>
+
+            <div id="success-message" class="success-message">
+                ¡Producto registrado con éxito! Redirigiendo...
+            </div>
+
+            <div class="form-header">
+                <h1>Nuevo Producto</h1>
+                <p>Ingresa los detalles para añadir el artículo al inventario.</p>
+            </div>
+
+            <form id="add-product-form">
+                <div class="form-group">
+                    <label for="nombre">Nombre del Producto</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej. Monitor UltraWide 34\" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" placeholder="Escribe una breve descripción del producto..." required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="precio">Precio ($)</label>
+                        <input type="number" id="precio" name="precio" placeholder="0.00" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">Stock Inicial</label>
+                        <input type="number" id="stock" name="stock" placeholder="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria">Categoría</label>
+                    <select id="categoria" name="categoria" required>
+                        <option value="" disabled selected>Selecciona una categoría</option>
+                        <option value="1">Electrónica</option>
+                        <option value="2">Hogar</option>
+                        <option value="3">Deportes</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;">Registrar Producto</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('add-product-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Aquí iría la lógica de guardado (DB/Backend)
+            document.getElementById('success-message').style.display = 'block';
+            this.style.opacity = '0.5';
+            this.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,14 +1,236 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tienda Online - Premium</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Tienda<span>Online</span></a>
+            
+            <div class="search-bar">
+                <input type="text" id="product-search" placeholder="Buscar productos...">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
 
+            <ul class="nav-links">
+                <li><a href="#product-section">Productos</a></li>
+                <li><a href="add-product.html" class="btn-nav">Añadir Nuevo</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Descubre Tecnología <span>Premium</span></h1>
+                <p>Nuestra colección curada de los mejores productos del mercado, ahora a tu alcance.</p>
+                <a href="#product-section" class="btn-primary">Ver Colección</a>
+            </div>
+            <div class="hero-image">
+                <img src="media/laptop.png" alt="Featured Product">
+            </div>
+        </header>
+
+        <section id="product-section">
+            <div class="section-header">
+                <div>
+                    <h2>Nuestro Catálogo</h2>
+                    <p class="section-subtitle">Lo mejor en electrónica, hogar y deportes</p>
+                </div>
+                <span class="badge" id="product-count">0 Productos</span>
+            </div>
+            <main id="product-list" class="product-grid">
+                <!-- Los productos se cargarán aquí dinámicamente -->
+                <div class="loading">Cargando catálogo...</div>
+            </main>
+        </section>
+    </div>
+
+    <!-- Modal para descripción detallada -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modal-img" src="" alt="">
+                </div>
+                <div class="modal-info">
+                    <span id="modal-category" class="category"></span>
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-description" class="description"></p>
+                    <div class="modal-features">
+                        <h3>Características Clave:</h3>
+                        <ul id="modal-features-list"></ul>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="modal-price" class="price"></div>
+                        <div id="modal-stock" class="stock-badge"></div>
+                    </div>
+                    <button class="btn-primary">Comprar Ahora</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categorias = {
+            1: { nombre: 'Electrónica', img: 'media/laptop.png' },
+            2: { nombre: 'Hogar', img: 'media/vacuum.png' },
+            3: { nombre: 'Deportes', img: 'media/soccer_ball.png' }
+        };
+
+        const productos = [
+            { 
+                id: 1, 
+                nombre: 'Smartphone Ultra G1', 
+                precio: 999.99, 
+                stock: 45, 
+                categoria_id: 1,
+                descripcion: 'El smartphone más avanzado con pantalla Super Retina XDR y el chip A16 Bionic para un rendimiento sin precedentes.',
+                features: ['Pantalla OLED 120Hz', 'Cámara Pro de 48MP', 'Batería para todo el día'],
+                img: 'media/smartphone.png'
+            },
+            { 
+                id: 2, 
+                nombre: 'Laptop Workstation Pro', 
+                precio: 1499.00, 
+                stock: 12, 
+                categoria_id: 1,
+                descripcion: 'Potencia absoluta para creadores y profesionales. Equipada con lo último en procesamiento y gráficos.',
+                features: ['32GB RAM DDR5', '2TB SSD NVMe', 'Pantalla 4K Mini-LED'],
+                img: 'media/laptop.png'
+            },
+            { 
+                id: 3, 
+                nombre: 'Robot Vacuum V10', 
+                precio: 349.00, 
+                stock: 25, 
+                categoria_id: 2,
+                descripcion: 'Limpieza inteligente con navegación LiDAR. Olvídate de barrer con la potencia de succión más alta de su clase.',
+                features: ['Vaciado Automático', 'App Control y Alexa', 'Filtro HEPA'],
+                img: 'media/vacuum.png'
+            },
+            { 
+                id: 4, 
+                nombre: 'Balón Profesional Elite', 
+                precio: 45.00, 
+                stock: 80, 
+                categoria_id: 3,
+                descripcion: 'El balón oficial de las grandes ligas. Diseño aerodinámico perfecto para una precisión inigualable.',
+                features: ['Talla FIFA Pro', 'Textura Aero-Grip', 'Construcción sin costuras'],
+                img: 'media/soccer_ball.png'
+            },
+            { 
+                id: 5, 
+                nombre: 'Camiseta Elite DryFit', 
+                precio: 29.50, 
+                stock: 60, 
+                categoria_id: 3,
+                descripcion: 'Tejido ultra transpirable que te mantiene fresco incluso en los entrenamientos más intensos.',
+                features: ['Tejido Micro-malla', 'Costuras Planas', 'Protección UV 50+'],
+                img: 'media/shirt.png'
+            }
+        ];
+
+        function renderProducts(filter = '') {
+            const container = document.getElementById('product-list');
+            const countBadge = document.getElementById('product-count');
+            container.innerHTML = '';
+            
+            const filteredProducts = productos.filter(p => 
+                p.nombre.toLowerCase().includes(filter.toLowerCase()) ||
+                categorias[p.categoria_id].nombre.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            countBadge.textContent = `${filteredProducts.length} Productos`;
+
+            if (filteredProducts.length === 0) {
+                container.innerHTML = '<div class="no-results">No se encontraron productos que coincidan con tu búsqueda.</div>';
+                return;
+            }
+
+            filteredProducts.forEach(producto => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.onclick = () => showProductDetails(producto);
+                
+                const stockStatus = producto.stock > 20 ? 'in-stock' : 'low-stock';
+                const catInfo = categorias[producto.categoria_id];
+                
+                card.innerHTML = `
+                    <div class="card-image">
+                        <img src="${producto.img}" alt="${producto.nombre}">
+                        <div class="card-overlay">
+                            <span>Ver Detalles</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <span class="category">${catInfo.nombre}</span>
+                        <h3>${producto.nombre}</h3>
+                        <div class="card-footer">
+                            <div class="price">$${producto.precio.toFixed(2)}</div>
+                            <div class="stock">
+                                <span class="stock-dot ${stockStatus}"></span>
+                                ${producto.stock} uds
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function showProductDetails(producto) {
+            const modal = document.getElementById('product-modal');
+            const catInfo = categorias[producto.categoria_id];
+            
+            document.getElementById('modal-img').src = producto.img;
+            document.getElementById('modal-category').textContent = catInfo.nombre;
+            document.getElementById('modal-title').textContent = producto.nombre;
+            document.getElementById('modal-description').textContent = producto.descripcion;
+            document.getElementById('modal-price').textContent = `$${producto.precio.toFixed(2)}`;
+            
+            const stockBadge = document.getElementById('modal-stock');
+            stockBadge.textContent = `${producto.stock} en stock`;
+            stockBadge.className = `stock-badge ${producto.stock > 20 ? 'in-stock' : 'low-stock'}`;
+
+            const featuresList = document.getElementById('modal-features-list');
+            featuresList.innerHTML = producto.features.map(f => `<li>${f}</li>`).join('');
+
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Cerrar Modal
+        document.querySelector('.close-modal').addEventListener('click', () => {
+            document.getElementById('product-modal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        });
+
+        window.onclick = (event) => {
+            const modal = document.getElementById('product-modal');
+            if (event.target == modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        // Búsqueda
+        document.getElementById('product-search').addEventListener('input', (e) => {
+            renderProducts(e.target.value);
+        });
+
+        // Carga inicial
+        setTimeout(() => renderProducts(), 300);
+    </script>
 </body>
 
 </html>
